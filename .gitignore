@@ -4,3 +4,5 @@
 .idea/
 
 .DS_Store
+
+web/DB_conn/__pycache__/
