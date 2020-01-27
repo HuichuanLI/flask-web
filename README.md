@@ -23,3 +23,6 @@
     curl "http://0.0.0.0:5000/imooc/get?a=b"
     
     curl "http://0.0.0.0:5000/imooc/post" -X POST -d"a=b"
+
+
+![](./photo/07.png)
