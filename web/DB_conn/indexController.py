@@ -2,6 +2,8 @@
 from flask import Flask, Blueprint, request, make_response, jsonify, render_template
 from application import db
 from sqlalchemy import text
+from common.user import User
+
 '''
 post/index 列表
 post/info 详情
@@ -80,21 +82,19 @@ def json_same():
 
 @index_page.route("/template")
 def template():
-
-
-
     ##传值
     name = "huichuan"
     ##查询数据库
 
-    sql = text("select * from `user`")
-    result = db.engine.execute(sql)
+    # sql = text("select * from `user`")
+    # result = db.engine.execute(sql)
+
     context = {"name": name}
 
-    context['result'] = result
+    context['result'] = User.query.all()
 
-    context['user'] = {"nickname": "Huichuan", "qq": "xxxxx", "home_page": "http://www.54php.cn"}
-    context['num_list'] = [1, 2, 3, 4, 5]
+    for user in User.query.all():
+        print(user.User)
     return render_template("index.html", **context)
 
 
