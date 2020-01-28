@@ -10,6 +10,7 @@ class UrlManager(object):
         config_domain = app.config['DOMAIN']
         return "%s%s" % (config_domain['www'], path)
 
+    # 这个很重要版本管理
     @staticmethod
     def buildStaticUrl(path):
         path = "/static" + path + "?ver=" + UrlManager.getReleaseVersion()

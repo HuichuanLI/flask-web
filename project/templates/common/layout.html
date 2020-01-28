@@ -6,7 +6,6 @@
     <!--bootstrap v3的核心样式-->
     <link rel="stylesheet" href="{{ buildStaticUrl('/plugins/bootstrap_v3/css/bootstrap.min.css') }}">
     {% block css %}{% endblock %}
-
 </head>
 <body>
 
@@ -30,25 +29,28 @@
                 <li class="active"><a href="{{ buildUrl('/') }}">影视</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                {% if current_user %}
+                <li><a href="javascript:void(0);">{{ current_user.nickname }}</a></li>
+                <li><a href="{{ buildUrl('/member/logout') }}">退出</a></li>
+                {% else %}
                 <li><a href="{{ buildUrl('/member/reg') }}">注册</a></li>
                 <li><a href="{{ buildUrl('/member/login') }}">登录</a></li>
+                {% endif %}
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container" style="min-height: 600px;">
-   {% block content %} {% endblock %}
+    {% block content %} {% endblock %}
 </div>
 <footer class="text-center">
-     @2020 李汇川
+    编程浪子 @2019 www.54php.cn
 </footer>
 
 <script src="{{buildStaticUrl('/plugins/jquery.min.js')}}"></script>
 <script src="{{buildStaticUrl('/plugins/bootstrap_v3/js/bootstrap.min.js')}}"></script>
 <script src="{{buildStaticUrl('/plugins/layer/layer.js')}}"></script>
 <script src="{{buildStaticUrl('/js/common.js')}}"></script>
-
 {% block js %} {% endblock %}
-
 </body>
 </html>

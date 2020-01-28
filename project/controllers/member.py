@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from application import app, db
-from flask import Blueprint, render_template, request, jsonify
-from common.lib.Helper import ops_renderErrJSON, ops_renderJSON
+from flask import Blueprint, render_template, request, jsonify, session, make_response, redirect
+from common.lib.Helper import ops_renderErrJSON, ops_renderJSON, ops_render
 from common.models.user import User
 from common.lib.UserService import UserService
 from common.lib.DataHelper import getCurrentTime
+from common.lib.UrlManager import UrlManager
 
 member_page = Blueprint("member_page", __name__)
 
@@ -45,6 +46,37 @@ def reg():
         return ops_renderJSON(msg="注册成功~~")
 
 
-@member_page.route("/login")
+@member_page.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("member/login.html")
+    if request.method == "GET":
+        return ops_render("member/login.html")
+    req = request.values
+    login_name = req['login_name'] if 'login_name' in req else ''
+    login_pwd = req['login_pwd'] if 'login_pwd' in req else ''
+    if login_name is None or len(login_name) < 1:
+        return ops_renderErrJSON("请输入正确的登录用户名~~")
+
+    if login_pwd is None or len(login_pwd) < 6:
+        return ops_renderErrJSON("请输入正确的登录密码~~")
+    user_info = User.query.filter_by(login_name=login_name).first()
+    if not user_info:
+        return ops_renderErrJSON("请输入正确的登录用户名和密码 -1~~")
+
+    if user_info.login_pwd != UserService.genePwd(login_pwd, user_info.login_salt):
+        return ops_renderErrJSON("请输入正确的登录用户名和密码 -2 ~~")
+
+    if user_info.status != 1:
+        return ops_renderErrJSON("账号被禁用，请联系管理员处理~~")
+    # session['uid'] = user_info.id
+
+    response = make_response(ops_renderJSON(msg="登录成功~~"))
+    response.set_cookie(app.config['AUTH_COOKIE_NAME'],
+                        "%s#%s" % (UserService.geneAuthCode(user_info), user_info.id), 60 * 60 * 24 * 120)
+    return response
+
+
+@member_page.route("/logout")
+def logOut():
+    response = make_response(redirect(UrlManager.buildUrl("/")))
+    response.delete_cookie(app.config['AUTH_COOKIE_NAME'])
+    return response
