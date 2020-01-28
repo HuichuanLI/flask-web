@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from application import app, db, manager
+from application import app, db, manager, scheduler
 from www import *
 from flask_script import Server, Command
 import sys
 import traceback
+import datetime
 
 ## web server
 ## flask script 设置
@@ -20,7 +21,14 @@ def create_all():
 manager.add_command("create_all", create_all)
 
 
+def aps_test():
+    print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
 def main():
+    app.apscheduler.add_job(func=aps_test, trigger="cron", second="*/5", id="app_test")
+
+    scheduler.start()
     manager.run()
 
 
