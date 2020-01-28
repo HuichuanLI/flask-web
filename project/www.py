@@ -4,7 +4,6 @@ from controllers.index import index_page
 from flask_debugtoolbar import DebugToolbarExtension
 from controllers.member import member_page
 
-
 # 添加debug tool
 toolbar = DebugToolbarExtension(app)
 
@@ -15,4 +14,12 @@ from interceptors.Auth import *
 from interceptors.errorHandler import *
 
 app.register_blueprint(index_page, url_prefix="/")
-app.register_blueprint( member_page,url_prefix = "/member" )
+app.register_blueprint(member_page, url_prefix="/member")
+
+'''
+模板函数
+'''
+from common.lib.UrlManager import UrlManager
+
+app.add_template_global(UrlManager.buildStaticUrl, 'buildStaticUrl')
+app.add_template_global(UrlManager.buildUrl, 'buildUrl')
