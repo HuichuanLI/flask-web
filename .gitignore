@@ -6,3 +6,9 @@
 .DS_Store
 
 web/DB_conn/__pycache__/
+
+project/__pycache__/
+
+project/config/__pycache__/
+
+project/interceptors/__pycache__/
