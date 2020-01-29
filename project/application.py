@@ -13,5 +13,5 @@ app.config.from_pyfile("config/base_setting.py")
 if "ops_config" in os.environ:
     app.config.from_pyfile("config/%s_setting.py" % (os.environ['ops_config']))
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@127.0.0.1/mysql"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@127.0.0.1/movie_cat"
 db = SQLAlchemy(app)

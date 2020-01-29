@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from common.lib.DataHelper import getCurrentTime
 from urllib.parse import urlparse
 from common.models.movie import Movie
+import traceback
 
 '''
 python manager.py runjob -m movie -a list | parse
@@ -15,7 +16,7 @@ class JobTask():
     def __init__(self):
         self.source = "btbtdy"
         self.url = {
-            "num": 3,
+            "num": 50,
             "url": "http://www.btbtdy.me/btfl/dy1-#d#.html",
             "path": "./tmp/%s/" % (self.source)
         }
@@ -26,9 +27,13 @@ class JobTask():
     '''
 
     def run(self, params):
+        act = params['act']
         self.date = getCurrentTime(frm="%Y%m%d")
-        self.getList()
-        self.parseInfo()
+        if act == "list":
+            self.getList()
+            self.parseInfo()
+        elif act == "parse":
+            self.parseInfo()
 
     '''
        获取列表
@@ -73,11 +78,11 @@ class JobTask():
                 if not os.path.exists(tmp_info_path):
                     tmp_content = self.getHttpContent(item['url'])
                     self.saveContent(tmp_info_path, tmp_content)
-                time.sleep(0.3)
 
                 if not os.path.exists(tmp_vid_path):
                     tmp_content = self.getHttpContent(item['vid_url'])
                     self.saveContent(tmp_vid_path, tmp_content)
+                time.sleep(1)
 
     def parseList(self, content):
         data = []
@@ -152,25 +157,34 @@ class JobTask():
                 app.logger.info(tmp_data)
 
                 tmp_movie_info = Movie.query.filter_by(hash=tmp_data['hash']).first()
+
                 if tmp_movie_info:
                     continue
                 tmp_model_movie = Movie(**tmp_data)
                 db.session.add(tmp_model_movie)
                 db.session.commit()
 
-            except:
-                continue
-            return True
+            except Exception as e:
+                traceback.print_exc(e)
+
+        return True
 
     def getHttpContent(self, url):
         try:
-            r = requests.get(url)
+            headers = {
+                'Content-Type': 'text/html;charset=utf-8',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                'Referer': "http://www.btbtdy.me/btdy/dy18196.html",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
+            }
+            r = requests.get(url, headers=headers)
             if r.status_code != 200:
+                app.logger.info(r.status_code)
                 return None
 
             return r.content
 
-        except Exception:
+        except:
             return None
 
     def makeSuredirs(self, path):
