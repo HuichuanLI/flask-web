@@ -82,7 +82,7 @@ class JobTask():
                 if not os.path.exists(tmp_vid_path):
                     tmp_content = self.getHttpContent(item['vid_url'])
                     self.saveContent(tmp_vid_path, tmp_content)
-                time.sleep(1)
+                time.sleep(0.1)
 
     def parseList(self, content):
         data = []

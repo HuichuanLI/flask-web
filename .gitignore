@@ -22,3 +22,5 @@ project/common/lib/__pycache__/
 project/tmp/
 
 project/jobs/__pycache__/
+
+project/jobs/tasks/__pycache__/
