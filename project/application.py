@@ -15,6 +15,3 @@ if "ops_config" in os.environ:
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@127.0.0.1/mysql"
 db = SQLAlchemy(app)
-
-scheduler = APScheduler()
-scheduler.init_app(app)
